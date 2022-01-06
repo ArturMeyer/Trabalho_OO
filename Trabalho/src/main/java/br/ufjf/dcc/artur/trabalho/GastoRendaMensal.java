@@ -6,19 +6,17 @@ package br.ufjf.dcc.artur.trabalho;
 
 /**
  *
- * @author Artur Welerson Sott Meyer - 202065552C
+ * @author Usuario
  */
-public class Funcionario {
-
+public class GastoRendaMensal {
+    
     private String nome;
-    private String codigo;
-    private float salario;
+    private float valor;
     private int duracao;
-
-    public Funcionario(String nome, String codigo, float salario, int duracao) {
+    
+    public GastoRendaMensal(String nome, float valor, int duracao) {
         this.nome = nome;
-        this.codigo = codigo;
-        this.salario = salario;
+        this.valor = valor;
         this.duracao = duracao;
     }
 
@@ -30,20 +28,12 @@ public class Funcionario {
         this.nome = nome;
     }
 
-    public String getCodigo() {
-        return codigo;
+    public float getValor() {
+        return valor;
     }
 
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public float getSalario() {
-        return salario;
-    }
-
-    public void setSalario(float salario) {
-        this.salario = salario;
+    public void setValor(float valor) {
+        this.valor = valor;
     }
 
     public int getDuracao() {
@@ -54,5 +44,4 @@ public class Funcionario {
         this.duracao = duracao;
     }
     
-
 }
