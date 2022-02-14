@@ -1,4 +1,4 @@
-package br.ufjf.dcc.artur.trabalho;
+package br.ufjf.dcc.artur.trabalho.model;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -13,21 +13,27 @@ import java.util.HashMap;
  *
  * @author Artur Welerson Sott Meyer - 202065552C
  */
-public class Administrador {
+public class Administrador implements UsuarioGastos{
 
     private String nome;
     private String senha;
     private float saldo;
-    private List<GastoRendaMensal> gastos = new ArrayList<>();
-    private List<GastoRendaMensal> rendas = new ArrayList<>();
-    private List<Financiamento> financiamentos = new ArrayList<>();
-    private Map<String, Dependente> dependentes = new HashMap<>();
-    private Map<String, Funcionario> funcionarios = new HashMap<>();
+    private List<GastoRendaMensal> gastos;
+    private List<GastoRendaMensal> rendas;
+    private List<Financiamento> financiamentos;
+    private List<Investimento> investimentos;
+    private Map<String, Dependente> dependentes;
+    private Map<String, Funcionario> funcionarios;
 
     public Administrador(String nome, String senha, float saldo) {
         this.nome = nome;
         this.senha = senha;
         this.saldo = saldo;
+        gastos = new ArrayList<>();
+        rendas = new ArrayList<>();
+        investimentos = new ArrayList<>();
+        dependentes = new HashMap<>();
+        funcionarios = new HashMap<>();
     }
 
     public String getNome() {
@@ -46,15 +52,70 @@ public class Administrador {
         this.senha = senha;
     }
 
-    public void adicionarFinanciamento(String nome, float valor, int duracao, float juros, int tipoJuros, boolean negativo) {
-        for (Financiamento elemento : this.financiamentos) {
+    public float getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(float saldo) {
+        this.saldo = saldo;
+    }
+
+    public Investimento adicionarInvestimento(String nome, float valor, float juros, int tipoJuros) {
+        if (this.investimentos == null) {
+            this.investimentos = new ArrayList<>();
+        }
+        for (Investimento elemento : this.investimentos) {
             if (elemento.getNome().equals(nome)) {
                 System.out.println("Nome já está em uso");
+                return null;
+            }
+        }
+        Investimento novoInvestimento = new Investimento(nome, valor, juros, tipoJuros);
+        this.investimentos.add(novoInvestimento);
+        return novoInvestimento;
+    }
+
+    public void removerInvestimento(String nome) {
+        if (this.investimentos.isEmpty()) {
+            System.out.println("Lista vazia");
+            return;
+        }
+        for (Investimento elemento : this.investimentos) {
+            if (elemento.getNome().equals(nome)) {
+                this.investimentos.remove(elemento);
                 return;
             }
         }
-        Financiamento novoFinanciamento = new Financiamento(nome, valor, duracao, juros, tipoJuros, negativo);
+        System.out.println("Elemento não encontrado!");
+    }
+
+    public Investimento getInvestimento(String nome) {
+        for (Investimento elemento : this.investimentos) {
+            if (elemento.getNome().equals(nome)) {
+                return elemento;
+            }
+        }
+        System.out.println("Elemento não encontrado!");
+        return null;
+    }
+
+    public List<Investimento> getInvestimentos() {
+        return this.investimentos;
+    }
+
+    public Financiamento adicionarFinanciamento(String nome, float valor, int duracao, float juros, int tipoJuros) {
+        if (this.financiamentos == null) {
+            this.financiamentos = new ArrayList<>();
+        }
+        for (Financiamento elemento : this.financiamentos) {
+            if (elemento.getNome().equals(nome)) {
+                System.out.println("Nome já está em uso");
+                return null;
+            }
+        }
+        Financiamento novoFinanciamento = new Financiamento(nome, valor, duracao, juros, tipoJuros);
         this.financiamentos.add(novoFinanciamento);
+        return novoFinanciamento;
     }
 
     public void removerFinanciamento(String nome) {
@@ -64,6 +125,7 @@ public class Administrador {
         }
         for (Financiamento elemento : this.financiamentos) {
             if (elemento.getNome().equals(nome)) {
+                System.out.println(elemento.getNome());
                 this.financiamentos.remove(elemento);
                 return;
             }
@@ -79,6 +141,10 @@ public class Administrador {
         }
         System.out.println("Elemento não encontrado!");
         return null;
+    }
+
+    public List<Financiamento> getFinanciamentos() {
+        return this.financiamentos;
     }
 
     public void adicionarRenda(String nome, float valor, int duracao) {
@@ -97,9 +163,9 @@ public class Administrador {
             System.out.println("Lista vazia");
             return;
         }
-        for (GastoRendaMensal elemento : this.gastos) {
+        for (GastoRendaMensal elemento : this.rendas) {
             if (elemento.getNome().equals(nome)) {
-                this.gastos.remove(elemento);
+                this.rendas.remove(elemento);
                 return;
             }
         }
@@ -107,13 +173,17 @@ public class Administrador {
     }
 
     public GastoRendaMensal getRenda(String nome) {
-        for (GastoRendaMensal elemento : this.gastos) {
+        for (GastoRendaMensal elemento : this.rendas) {
             if (elemento.getNome().equals(nome)) {
                 return elemento;
             }
         }
         System.out.println("Elemento não encontrado!");
         return null;
+    }
+
+    public List<GastoRendaMensal> getRendas() {
+        return this.rendas;
     }
 
     public void adicionarGasto(String nome, float valor, int duracao) {
@@ -143,12 +213,26 @@ public class Administrador {
 
     public GastoRendaMensal getGasto(String nome) {
         for (GastoRendaMensal elemento : this.gastos) {
-            if (elemento.getNome().equals(nome)) {
+            System.out.println(elemento.getNome() + "  " + nome);
+            if (elemento.getNome().equals(nome.trim())) {
                 return elemento;
             }
         }
         System.out.println("Elemento não encontrado!");
         return null;
+    }
+
+    @Override
+    public float getGastoTotal() {
+        float total = 0;
+        for (GastoRendaMensal elemento : this.gastos) {
+            total += elemento.getValor();
+        }
+        return total;
+    }
+
+    public List<GastoRendaMensal> getGastos() {
+        return this.gastos;
     }
 
     public String adicionarFuncionario(String nome, float salario, int duracao) {
@@ -162,14 +246,14 @@ public class Administrador {
         return chave.toString();
     }
 
-    public void removerFuncionario(String nome) {
+    public void removerFuncionario(String codigo) {
         if (this.funcionarios.isEmpty()) {
             System.out.println("Lista vazia");
             return;
         }
-        for (String elemento : this.funcionarios.keySet()) {
-            if (elemento.equals(nome)) {
-                this.funcionarios.remove(elemento);
+        for (Funcionario elemento : this.funcionarios.values()) {
+            if (elemento.getCodigo().equals(codigo)) {
+                this.funcionarios.remove(codigo, elemento);
                 return;
             }
         }
@@ -184,6 +268,10 @@ public class Administrador {
         }
         System.out.println("Elemento não encontrado!");
         return null;
+    }
+
+    public Map<String, Funcionario> getFuncionarios() {
+        return this.funcionarios;
     }
 
     public Funcionario getFuncionarioCodigo(String codigo) {
@@ -207,14 +295,14 @@ public class Administrador {
         return chave.toString();
     }
 
-    public void removerDependentes(String nome) {
+    public void removerDependente(String codigo) {
         if (this.dependentes.isEmpty()) {
             System.out.println("Lista vazia");
             return;
         }
-        for (String elemento : this.dependentes.keySet()) {
-            if (elemento.equals(nome)) {
-                this.dependentes.remove(elemento);
+        for (Dependente elemento : this.dependentes.values()) {
+            if (elemento.getCodigo().equals(codigo)) {
+                this.dependentes.remove(elemento.getCodigo(), elemento);
                 return;
             }
         }
@@ -222,9 +310,9 @@ public class Administrador {
     }
 
     public Dependente getDependente(String nome) {
-        for (String elemento : this.dependentes.keySet()) {
-            if (elemento.equals(nome)) {
-                return this.dependentes.get(elemento);
+        for (Dependente elemento : this.dependentes.values()) {
+            if (elemento.getNome().equals(nome)) {
+                return elemento;
             }
         }
         System.out.println("Elemento não encontrado!");
@@ -239,6 +327,10 @@ public class Administrador {
         }
         System.out.println("Elemento não encontrado!");
         return null;
+    }
+
+    public Map<String, Dependente> getDependentes() {
+        return this.dependentes;
     }
 
     public float calcularSaldoFuturo(int meses) {
@@ -280,11 +372,9 @@ public class Administrador {
                             + " | Nome: " + elemento.getNome()
                             + " | Valor: R$ " + elemento.getValor()
                             + " | Parcela: R$ " + elemento.getValorParcelas() + "\n");
-                    if (elemento.isNegativo()) {
-                        saldoFuturo = saldoFuturo - elemento.getValorParcelas();
-                    } else {
-                        saldoFuturo = saldoFuturo + elemento.getValorParcelas();
-                    }
+
+                    saldoFuturo = saldoFuturo - elemento.getValorParcelas();
+
                 }
             }
 
@@ -310,7 +400,7 @@ public class Administrador {
         }
         return saldoFuturo;
     }
-    
+
     public float calcularTempoParaMeta(float meta) {
 
         float saldoFuturo = this.saldo;
@@ -336,11 +426,8 @@ public class Administrador {
 
             for (Financiamento elemento : this.financiamentos) {
                 if (elemento.getDuracao() >= meses) {
-                    if (elemento.isNegativo()) {
-                        saldoFuturo = saldoFuturo - elemento.getValorParcelas();
-                    } else {
-                        saldoFuturo = saldoFuturo + elemento.getValorParcelas();
-                    }
+
+                    saldoFuturo = saldoFuturo - elemento.getValorParcelas();
                 }
             }
 

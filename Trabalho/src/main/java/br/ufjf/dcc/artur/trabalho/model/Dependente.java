@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package br.ufjf.dcc.artur.trabalho;
+package br.ufjf.dcc.artur.trabalho.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Artur Welerson Sott Meyer - 202065552C
  */
-public class Dependente {
+public class Dependente implements UsuarioGastos{
 
     private String nome;
     private String codigo;
@@ -52,7 +52,7 @@ public class Dependente {
     public List<GastoRendaMensal> getGastos() {
         return gastos;
     }
-    
+
     public void adicionarGasto(String nome, float valor, int duracao) {
         for (GastoRendaMensal elemento : this.gastos) {
             if (elemento.getNome().equals(nome)) {
@@ -86,6 +86,20 @@ public class Dependente {
         }
         System.out.println("Elemento não encontrado!");
         return null;
+    }
+
+    public float getGastoTotal() {
+        float total = 0;
+        try {
+            total = this.getMesada();
+            for (GastoRendaMensal elemento : this.gastos) {
+                total += elemento.getValor();
+            }
+            return total;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return 0;
     }
 
     public void setGastos(List<GastoRendaMensal> gastos) {
